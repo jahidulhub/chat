@@ -1,13 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Include Firebase scripts here -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <!-- Include other scripts and stylesheets as needed -->
+    <script src="app.js"></script>
     <link rel="stylesheet" href="styles.css">
     <title>Real-Time Chat App</title>
 </head>
 <body>
-    <div class="chat-container" id="chatContainer">
+    <!-- Your HTML content -->
+    
+    <div class="auth-container" id="authContainer">
+        <div class="login-form">
+            <h2>Login</h2>
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Your email">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Your password">
+            <button onclick="login()">Login</button>
+            <p>Don't have an account? <a href="#" onclick="toggleForm('signup')">Sign up</a></p>
+        </div>
+
+        <div class="signup-form" style="display: none;">
+            <h2>Sign Up</h2>
+            <label for="signupEmail">Email:</label>
+            <input type="email" id="signupEmail" placeholder="Your email">
+            <label for="signupPassword">Password:</label>
+            <input type="password" id="signupPassword" placeholder="Your password">
+            <button onclick="signup()">Sign Up</button>
+            <p>Already have an account? <a href="#" onclick="toggleForm('login')">Login</a></p>
+        </div>
+    </div>
+
+    <div class="chat-container" id="chatContainer" style="display: none;">
         <div class="user-list">
             <h2>Users Online</h2>
             <ul id="userList"></ul>
@@ -17,34 +44,100 @@
             <div class="message-input">
                 <input type="text" id="messageInput" placeholder="Type your message...">
                 <button onclick="sendMessage()">Send</button>
+                <button onclick="logout()">Logout</button>
             </div>
         </div>
     </div>
 
-    <div class="login-container" id="loginContainer">
-        <h2>Login</h2>
-        <label for="email">Email:</label>
-        <input type="email" id="email" placeholder="Your email">
-        <label for="password">Password:</label>
-        <input type="password" id="password" placeholder="Your password">
-        <button onclick="login()">Login</button>
-        <p>Don't have an account? <a href="#" onclick="toggleForm('signup')">Sign up</a></p>
-    </div>
+    <script>
+        // Function to toggle between login and signup forms
+        function toggleForm(formType) {
+            const loginForm = document.querySelector('.login-form');
+            const signupForm = document.querySelector('.signup-form');
 
-    <div class="signup-container" id="signupContainer">
-        <h2>Sign Up</h2>
-        <label for="signupEmail">Email:</label>
-        <input type="email" id="signupEmail" placeholder="Your email">
-        <label for="signupPassword">Password:</label>
-        <input type="password" id="signupPassword" placeholder="Your password">
-        <button onclick="signup()">Sign Up</button>
-        <p>Already have an account? <a href="#" onclick="toggleForm('login')">Login</a></p>
-    </div>
+            if (formType === 'signup') {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+            } else {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+            }
+        }
+        // Function to check if a user is logged in and toggle the appropriate form
+        firebase.auth().onAuthStateChanged(user => {
+            const authContainer = document.getElementById('authContainer');
+            const chatContainer = document.getElementById('chatContainer');
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js"></script>
-    <script src="app.js"></script>
+            if (user) {
+                // User is logged in
+                authContainer.style.display = 'none';
+                chatContainer.style.display = 'block';
+                subscribeToMessages();
+            } else {
+                // User is not logged in
+                authContainer.style.display = 'block';
+                chatContainer.style.display = 'none';
+            }
+        });
+
+        const firebaseConfig = {
+            // Your Firebase config here
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const analytics = firebase.analytics();
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Function to log in a user
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    // Successfully signed in
+                    console.log('User signed in:', userCredential.user);
+                    // You can handle further actions here, such as redirecting to the chat page
+                })
+                .catch(error => {
+                    // Handle login errors
+                    console.error('Login error:', error.message);
+                });
+        }
+
+        // Function to sign up a new user
+        function signup() {
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    // Successfully signed up
+                    console.log('User signed up:', userCredential.user);
+                    // You may choose to automatically log in the user after sign-up
+                    login();
+                })
+                .catch(error => {
+                    // Handle sign-up errors
+                    console.error('Sign-up error:', error.message);
+                });
+        }
+
+        // Function to log out the current user
+        function logout() {
+            auth.signOut()
+                .then(() => {
+                    // Successfully signed out
+                    console.log('User signed out');
+                    // You can handle further actions here, such as redirecting to the login page
+                })
+                .catch(error => {
+                    // Handle sign-out errors
+                    console.error('Sign-out error:', error.message);
+                });
+        }
+    </script>
 </body>
 </html>

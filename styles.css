@@ -2,57 +2,103 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #f2f2f2;
+}
+
+.auth-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f0f0f0;
 }
 
-.chat-container {
-    display: flex;
+.login-form, .signup-form {
     background-color: #fff;
     border-radius: 8px;
-    overflow: hidden;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.user-list, .chat-window {
-    flex: 1;
     padding: 20px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
 }
 
-.user-list {
-    border-right: 1px solid #ccc;
+.signup-form {
+    display: none;
 }
 
-.user-list h2 {
-    margin-bottom: 10px;
+label {
+    display: block;
+    margin-bottom: 8px;
 }
 
-.messages {
-    max-height: 400px;
-    overflow-y: auto;
-    margin-bottom: 10px;
-}
-
-.message-input {
-    display: flex;
-}
-
-.message-input input {
-    flex: 1;
-    padding: 8px;
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 16px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
 
-.message-input button {
-    padding: 8px 12px;
-    margin-left: 8px;
-    background-color: #4caf50;
+button {
+    background-color: #4CAF50;
     color: #fff;
+    padding: 10px 15px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.chat-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    text-align: center;
+}
+
+.user-list, .chat-window {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 10px;
+}
+
+.user-list {
+    flex: 1;
+}
+
+.chat-window {
+    flex: 3;
+    overflow-y: auto;
+}
+
+.message-input {
+    display: flex;
+    margin-top: 10px;
+}
+
+#messageInput {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button.logout {
+    background-color: #f44336;
+}
+
+button.logout:hover {
+    background-color: #d32f2f;
+}
+
+.message {
+    margin-bottom: 10px;
 }
